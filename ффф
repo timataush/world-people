@@ -1,0 +1,215 @@
+
+const btnPeople = document.querySelector('.aside__people');
+const btnShip = document.querySelector('.aside__ship');
+const btnPlanet = document.querySelector('.aside__species');
+const btnExit = document.querySelector('.bt.aside__exit'); // Исправлен селектор на .bt.aside__exit
+
+let historyStack = [];
+let currentHomeworldUrl = null;
+
+btnPeople.addEventListener('click', () => {
+    addToHistory('people');
+    fetchData('people');
+});
+
+btnShip.addEventListener('click', () => {
+    addToHistory('starships');
+    fetchData('starships');
+});
+
+btnPlanet.addEventListener('click', () => {
+    addToHistory('species');
+    fetchData('species');
+});
+
+const url = 'https://swapi.dev/api/';
+const url_people = 'people/';
+const url_starships = 'starships/';
+const url_species = 'species/';
+
+init();
+
+function init() {
+    fetchData('people');
+}
+
+async function fetchData(fetchType) {
+    let myUrl;
+
+    load(); // Показать прелоадер перед началом загрузки
+
+    if (fetchType === 'people') {
+        myUrl = url + url_people;
+    } else if (fetchType === 'starships') {
+        myUrl = url + url_starships;
+    } else if (fetchType === 'species') {
+        myUrl = url + url_species;
+    }
+
+    try {
+        const response = await fetch(myUrl);
+        const data = await response.json();
+
+        document.querySelector('.main__content').innerHTML = '';
+
+        for (const card of data.results) {
+            await addCard(card, myUrl);
+        }
+
+    } catch (error) {
+        console.error('Ошибка при загрузке данных:', error);
+    } finally {
+        finishLoad(); // Скрыть прелоадер после загрузки данных
+    }
+}
+
+async function addCard(data, myUrl) {
+    let card;
+    if (myUrl === url + url_people) {
+        const homeworldName = await fetchPlanet(data);
+
+        card = document.createElement('div');
+        card.className = 'main__item';
+        card.innerHTML = `
+            <a class="main__badge">${homeworldName}</a>
+            <div class="main__info">
+                name: ${data.name}
+                height: ${data.height}
+                hair-color: ${data.hair_color}
+                skin-color: ${data.skin_color}
+                eye-color: ${data.eye_color}
+                birth-year: ${data.birth_year}
+                gender: ${data.gender}
+                mass: ${data.mass}
+            </div>`;
+        
+        card.querySelector('.main__badge').addEventListener('click', () => {
+            planetCardInfo(data.homeworld);
+        });
+
+    } else if (myUrl === url + url_starships) {
+        card = document.createElement('div');
+        card.className = 'main__item';
+        card.innerHTML = `
+            <div class="main__info">
+                name: ${data.name}
+                model: ${data.model}
+                manufacturer: ${data.manufacturer}
+                credits: ${data.cost_in_credits}
+                length: ${data.length}
+                speed: ${data.max_atmosphering_speed}<br>
+                crew: ${data.crew}
+                passengers: ${data.passengers}
+                capacity: ${data.cargo_capacity}
+                consumables: ${data.consumables}
+                rating: ${data.hyperdrive_rating}
+                MGLT: ${data.MGLT}
+                class: ${data.starship_class}
+            </div>`;
+
+    } else if (myUrl === url + url_species) {
+        const homeworldName = await fetchPlanet(data);
+        
+        card = document.createElement('div');
+        card.className = 'main__item';
+        card.innerHTML = `
+            <a class="main__badge">${homeworldName}</a>
+            <div class="main__info">
+                name: ${data.name}
+                classification: ${data.classification}
+                designation: ${data.designation}
+                average-height: ${data.average_height}
+                skin-colors: ${data.skin_colors}
+                hair-colors: ${data.hair_colors}
+                eye-colors: ${data.eye_colors}
+                lifespan: ${data.average_lifespan}
+                language: ${data.language}
+            </div>`;
+        
+        card.querySelector('.main__badge').addEventListener('click', () => {
+            planetCardInfo(data.homeworld);
+        });
+    }
+
+    document.querySelector('.main__content').append(card);
+}
+
+async function fetchPlanet(data) {
+    if (data.homeworld) {
+        currentHomeworldUrl = data.homeworld;
+        const response = await fetch(data.homeworld);
+        const homeworldData = await response.json();
+        return homeworldData.name;
+    }
+    return 'Unknown';
+}
+
+async function planetCardInfo(homeworldUrl) {
+    load(); // Показать прелоадер перед началом загрузки
+
+    try {
+        const response = await fetch(homeworldUrl);
+        const homeworldData = await response.json();
+
+        document.querySelector('.main__content').innerHTML = '';
+        
+        const card = document.createElement('div');
+        card.className = 'main__item-planet';
+        card.innerHTML = `
+            <div class="main__planet-info">
+                Name: ${homeworldData.name}<br>
+                Climate: ${homeworldData.climate}<br>
+                Terrain: ${homeworldData.terrain}<br>
+                Population: ${homeworldData.population}<br>
+                Diameter: ${homeworldData.diameter}<br>
+                <a href="#" class="bt main_planet-exit">exit</a>
+            </div>`;
+
+        document.querySelector('.main__content').append(card);
+
+    } catch (error) {
+        console.error('Ошибка при загрузке данных о планете:', error);
+    } finally {
+        finishLoad(); // Скрыть прелоадер после загрузки данных
+    }
+}
+
+function load() {
+    const preloader = document.querySelector('.preloader');
+    if (preloader) {
+        preloader.classList.remove('done'); // Показать прелоадер
+    }
+}
+
+function finishLoad() {
+    const preloader = document.querySelector('.preloader');
+    if (preloader) {
+        preloader.classList.add('done'); // Скрыть прелоадер
+    }
+}
+
+function addToHistory(state) {
+    historyStack.push(state);
+}
+
+if (btnExit) {
+    btnExit.addEventListener('click', goBack);
+}
+
+function goBack() {
+    if (historyStack.length > 0) {
+        const lastState = historyStack.pop();
+
+        if (lastState === 'people') {
+            fetchData('people');
+        } else if (lastState === 'starships') {
+            fetchData('starships');
+        } else if (lastState === 'species') {
+            fetchData('species');
+        } else if (lastState === 'planetCard') {
+            planetCardInfo(currentHomeworldUrl);
+        }
+    } else {
+        console.log('История пуста.');
+    }
+}

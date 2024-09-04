@@ -1,10 +1,14 @@
+@import url("https://fonts.googleapis.com/css?family=Rubik:500");
 .aside {
   border-right: 2px solid black;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  width: 100%;
+  gap: 50px;
+  height: 100vh;
+  width: 200px;
+  position: fixed;
+  left: 0;
+  top: 0;
   align-items: center;
 }
 .aside__logo {
@@ -28,6 +32,54 @@
   align-content: center;
   justify-content: center;
   margin-bottom: 240px;
+}
+.aside__exit {
+  cursor: pointer;
+  height: 130px;
+  width: 130px;
+}
+
+.bt {
+  display: flex;
+  align-items: center;
+  padding: 20px 42px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 12px -2px rgba(0, 0, 0, 0.5);
+  line-height: 1.25;
+  background: #FC6E51;
+  text-decoration: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  color: white;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  position: relative;
+  transition: background-color 0.6s ease;
+  overflow: hidden;
+}
+.bt:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 50%;
+  left: 50%;
+  top: var(--mouse-y);
+  left: var(--mouse-x);
+  transform-style: flat;
+  transform: translate3d(-50%, -50%, 0);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 100%;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+.bt:focus, .bt:hover {
+  background: #fb512e;
+}
+.bt:active:after {
+  width: 300px;
+  height: 300px;
 }
 
 .button {
@@ -80,26 +132,50 @@
 .main__content {
   display: grid;
   grid-template-columns: 2fr 2fr 2fr 2fr 2fr;
-  gap: 10px;
+  gap: 13px;
   height: 100%;
-  width: 100%;
+  margin-left: 200px;
 }
 .main__item {
-  width: 195px;
-  height: 310px;
+  width: 190px;
+  height: 315px;
   border: 2px solid black;
-  display: grid;
-  grid-template-columns: 55% 45%;
-  justify-content: end;
-  margin: 3px;
+  display: flex;
+  margin: 4px;
+  margin-top: 5px;
+  border-radius: 15px;
+  position: relative;
+}
+.main__item-planet {
+  justify-content: center;
+  margin-left: 170px;
+  margin-top: 40px;
+  width: 750px;
+  height: 600px;
+  border-radius: 15px;
+  display: flex;
+  border: 2px solid black;
+  position: relative;
+  background: linear-gradient(90deg, #5d5fef, #ba33b5);
+}
+.main__planet-info {
+  display: flex;
+  align-items: center;
+  text-shadow: 2px 2px 4px rgba(11, 18, 235, 0.5);
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 50px;
+  padding-left: 30px;
+  justify-content: space-evenly;
+  flex-direction: column;
 }
 .main__btn {
   display: flex;
   justify-content: space-evenly;
   flex-direction: column;
-  margin: 13px;
+  margin: 5px;
   width: 69px;
-  font-size: 9px;
+  font-size: 8px;
   align-content: center;
 }
 .main__info {
@@ -107,6 +183,42 @@
   flex-direction: column;
   justify-content: space-evenly;
   align-content: center;
+  font-size: 12px;
+  font-size: 13px;
+  color: inherit;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.main__info:hover {
+  text-shadow: 1px 1px 0 gold;
+  color: inherit;
+}
+.main__badge {
+  position: absolute;
+  padding: 2px;
+  background-color: red;
+  border-radius: 20px;
+  top: -8px;
+  right: -12px;
+  cursor: pointer;
+  transition: all 1s;
+  border: 3px solid steelblue;
+}
+.main__badge:after {
+  content: "";
+  display: block;
+  position: relative;
+  width: 100%;
+  border-bottom: 3px solid steelblue;
+  bottom: 0.15em;
+  transition: all 1s;
+  border-radius: 20px;
+}
+.main__badge:hover:after {
+  width: 0%;
+  border-bottom-width: 1px;
+  text-shadow: 1px 1px 0 gold;
 }
 
 .main__btn .btn {
@@ -160,7 +272,7 @@
 }
 
 .body {
-  display: grid;
+  position: relative;
   height: 100%;
   grid-template-columns: 15% 85%;
   background-image: url("/img/ocean.jpg");

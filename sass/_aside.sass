@@ -2,12 +2,13 @@
   border-right: 2px solid black
   display: flex
   flex-direction: column
-  justify-content: space-between
-  height: 100%
-  width: 100%
-  // position: fixed
-  // left: 0
-  // top: 0
+  // justify-content: space-between
+  gap: 50px
+  height: 100vh
+  width: 200px
+  position: fixed
+  left: 0
+  top: 0
   // bottom: 0
   align-items: center
   &__logo
@@ -29,7 +30,10 @@
     align-content: center
     justify-content: center
     margin-bottom: 240px
-
+  &__exit
+    cursor: pointer
+    height: 130px
+    width: 130px
 
 
 // _______________________________
@@ -44,7 +48,51 @@
   //   transform: scale(1.2) 
 // _________________________________
 
-     
+@import url('https://fonts.googleapis.com/css?family=Rubik:500')
+.bt 
+  display: flex
+  align-items: center
+  padding: 20px 42px
+  border-radius: 5px
+  box-shadow: 0px 0px 12px -2px rgba(0,0,0,0.5)
+  line-height: 1.25
+  background: #FC6E51
+  text-decoration: none
+  user-select: none
+  color: white
+  font-size: 16px
+  letter-spacing: .08em
+  text-transform: uppercase
+  position: relative
+  transition: background-color .6s ease
+  overflow: hidden
+  &:after 
+    content: ""
+    position: absolute
+    width: 0
+    height: 0
+    top: 50%
+    left: 50%
+    top: var(--mouse-y)
+    left: var(--mouse-x)
+    transform-style: flat
+    transform: translate3d(-50%,-50%,0)
+    background: rgba(white,.1)
+    border-radius: 100%
+    transition: width .3s ease, height .3s ease
+  
+  &:focus,
+  &:hover 
+      background: darken(#FC6E51,7%)
+  
+  &:active 
+    &:after 
+      width: 300px
+      height: 300px
+    
+  
+
+
   
 
 

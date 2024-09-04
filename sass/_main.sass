@@ -3,30 +3,99 @@
    &__content
       display: grid
       grid-template-columns: 2fr 2fr 2fr 2fr 2fr
-      gap: 10px
+      gap: 13px
       height: 100%
-      width: 100%
+      margin-left: 200px
    &__item
-      width: 195px
-      height: 310px
+      width: 190px
+      height: 315px
       border: 2px solid black
-      display: grid
-      grid-template-columns: 55% 45% 
-      justify-content: end
-      margin: 3px
+      display: flex
+      margin: 4px
+      margin-top: 5px
+      border-radius: 15px
+      position: relative
+   &__item-planet
+      justify-content: center
+      margin-left: 170px
+      margin-top: 40px
+      width: 750px
+      height: 600px
+      border-radius: 15px
+      display: flex
+      border: 2px solid black
+      position: relative
+      background: -webkit-linear-gradient(90deg, #5d5fef,#ba33b5)
+      background: linear-gradient(90deg, #5d5fef,#ba33b5)
+   &__planet-info
+      display: flex
+      align-items: center
+      text-shadow: 2px 2px 4px rgba(11, 18, 235, 0.5)
+      text-decoration: none
+      text-transform: uppercase
+      font-size: 50px
+      padding-left: 30px
+      justify-content: space-evenly
+      flex-direction: column
+
+
+   //  &__planet-exit
+      // margin-right: 60px
+
+
+
+
+
+
+      
    &__btn 
       display: flex
       justify-content: space-evenly
       flex-direction: column
-      margin: 13px
+      margin: 5px
       width: 69px
-      font-size: 9px
+      font-size: 8px
       align-content: center
    &__info
       display: flex
       flex-direction: column
       justify-content: space-evenly
       align-content: center
+      font-size: 12px
+      font-size: 13px
+      color: inherit
+      text-decoration: none
+      text-transform: uppercase
+      cursor: pointer
+   &__info:hover
+      text-shadow: 1px 1px 0 gold
+      color: inherit
+   &__badge
+      position: absolute
+      padding: 2px
+      background-color: red
+      border-radius: 20px
+      top: -8px
+      right: -12px
+      cursor: pointer
+      transition: all 1s
+      border: 3px solid steelblue
+      &:after 
+        content: ""
+        display: block
+        position: relative
+        width: 100%
+        border-bottom: 3px solid steelblue
+        bottom: .15em
+        transition: all 1s
+        border-radius: 20px
+
+   &__badge:hover:after 
+      width: 0%
+      border-bottom-width: 1px
+      text-shadow: 1px 1px 0 gold
+      // color: red
+
 
 
 
@@ -84,4 +153,7 @@ $speed: 0.5s
       background: #323237
       content: attr(data-front)
       transform: translateY(0) rotateX(0)
+
+
+
 
