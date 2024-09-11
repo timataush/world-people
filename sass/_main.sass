@@ -7,10 +7,11 @@
       height: 100%
       margin-left: 200px
    &__item
-      width: 190px
-      height: 315px
+      width: 205px
+      height: 320px
       border: 2px solid black
       display: flex
+      justify-content: space-between
       margin: 4px
       margin-top: 5px
       border-radius: 15px
@@ -37,46 +38,45 @@
       padding-left: 30px
       justify-content: space-evenly
       flex-direction: column
-
-
-   //  &__planet-exit
-      // margin-right: 60px
-
-
-
-
-
-
-      
    &__btn 
       display: flex
       justify-content: space-evenly
       flex-direction: column
-      margin: 5px
+      margin: 2px
       width: 69px
       font-size: 8px
       align-content: center
    &__info
       display: flex
       flex-direction: column
-      justify-content: space-evenly
+      justify-content: center
       align-content: center
-      font-size: 12px
-      font-size: 13px
+      font-size: 12.3px
       color: inherit
       text-decoration: none
       text-transform: uppercase
       cursor: pointer
+      // margin-right: 30px
    &__info:hover
       text-shadow: 1px 1px 0 gold
       color: inherit
+   &__warning
+      width: 205px
+      height: 320px
+      border: 2px solid black
+      display: flex
+      justify-content: space-between
+      margin: 4px
+      margin-top: 5px
+      border-radius: 15px
+      position: relative
    &__badge
       position: absolute
       padding: 2px
       background-color: red
       border-radius: 20px
       top: -8px
-      right: -12px
+      right: -24px
       cursor: pointer
       transition: all 1s
       border: 3px solid steelblue
@@ -97,6 +97,69 @@
       // color: red
 
 
+
+// .main__pagination
+//   z-index: 1
+ul
+   padding-left: 0
+   // margin-bottom: 16px
+   margin: 0
+   display: flex
+ul li
+  display: inline-block
+  margin: 0 10px
+  width: 45px
+  height: 45px
+  border-radius: 50%
+  cursor: pointer
+  text-align: center
+  font-size: 17px
+  display: flex
+  flex-direction: column
+  justify-content: center
+  background-position: 0 -45px
+  transition: background-position 0.5s
+
+
+
+
+ul li.active 
+     color: #fff
+     background-image: linear-gradient(#ff4568,#ff4568)
+     background-repeat: no-repeat
+     background-position: 0 0
+
+
+
+
+
+.main
+   &__btnpg
+     justify-content: flex-end
+     display: flex
+     margin-right: 50px
+     align-items: center
+     margin-top: 25px
+   &__left
+      width: 24px
+      height: 24px
+      // margin-right: 15px
+   &__right
+      width: 24px
+      height: 24px
+      // margin-left: 15px
+
+
+
+.btnpg
+  display: inline-block
+  align-items: center
+  font-size: 17px
+  color: #383838
+  outline: none
+  border: none
+  cursor: pointer
+  height: 60px
 
 
 
@@ -157,3 +220,7 @@ $speed: 0.5s
 
 
 
+// .exit-turn
+//    display: block
+// .exit-off
+//    display: none
