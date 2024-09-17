@@ -6,7 +6,7 @@ const toPlanet = document.querySelector('.main__badge')
 const btnExit = document.querySelector('.bt.aside__exit')
 const btnNext = document.querySelector('.btnpg.main__next')
 const btnPrev = document.querySelector('.btnpg.main__prev')
-const links = document.querySelectorAll('.link')
+const links = document.querySelectorAll('.main__items')
 const pagination = document.querySelector('.main__pagination')
 
 btnNext.addEventListener('click', nextBtn)
@@ -17,21 +17,32 @@ btnPrev.addEventListener('click', backBtn)
 if (btnExit) {btnExit.addEventListener('click', goBack)}
 if(toPlanet){toPlanet.addEventListener('click', planetCardInfo)}
 
-btnPeople.addEventListener('click', ()=>fetchPage(url + url_people + page + currentValue),fetchData( url + url_people))
-btnShip.addEventListener('click', ()=>fetchPage(url + url_starships + page + currentValue),fetchData(url + url_starships))
-btnPlanet.addEventListener('click', ()=>fetchPage(url + url_species + page + currentValue), fetchData(url + url_species))
+btnPeople.addEventListener('click', ()=>{
+    paginatorLink = url + url_people,
+    fetchData( url + url_people),
+    countFetch(url + url_people)
+ })
+btnShip.addEventListener('click', ()=>{
+    paginatorLink = url + url_starships,
+    fetchData(url + url_starships),
+    countFetch(url + url_starships)
+
+ })
+btnPlanet.addEventListener('click', ()=>{ 
+    paginatorLink = url + url_species,
+    fetchData(url + url_species),
+    countFetch(url + url_species)
+
+ })
 
 const url = 'https://swapi.dev/api/'
 const url_people = 'people/'
 const url_starships = 'starships/'
 const url_species = 'species/'
 const page = '?page='
+let paginatorLink = ''
+let quantityPage = ''
 
-
-// let currentPeoplePage = 1
-// let currentStarshipsPage = 1
-// let currentSpeciesPage = 1
-// let currentCategory = 'people'
 
 
 
@@ -39,6 +50,9 @@ init()
 function init(){
     load()
     fetchData(url + url_people)
+    paginatorLink = url + url_people
+    // updatePagination(totalPages)
+    // countFetch(myUrl)
 
 }
 
@@ -63,9 +77,50 @@ load()
         load()
     }
 
+    async function countFetch(myUrl) {
+            const response = await fetch(myUrl)
+            const data = await response.json()
+            const itemsPerPage = 10
+            quantityPage = Math.ceil(data.count / itemsPerPage)
+            updatePagination(quantityPage)
+       
+    }
+    
+
+    function updatePagination(totalPages) {
+        const ul = document.querySelector('.main__ul')
+        ul.innerHTML = ''
+        for (let i = 1; i <= totalPages; i++) {
+            const pageLink = document.createElement('li')
+            pageLink.className = 'main__items'
+            pageLink.setAttribute('data-value', i)
+            pageLink.textContent = i
+            if (i === 1) {
+                pageLink.classList.add("active")
+            }
+            pageLink.addEventListener('click', activeLink)
+            
+            ul.append(pageLink)
+        }
+    
+        // links = document.querySelectorAll('.main__items')
+    }
+    
+
+
+
+
+
+
+
+
+
+
 
 
     async function addCard(data,myUrl){
+
+        load()
 
     if(myUrl === url + url_people || myUrl === url + url_people + page + currentValue){
 
@@ -105,7 +160,9 @@ load()
   card.querySelector('.main__badge').addEventListener('click', () => {
     planetCardInfo(data.homeworld)
 
+
 })
+btnExit.classList.add('exit-off')
 
 }
 if(myUrl === url + url_starships ||myUrl === url + url_starships + page + currentValue){
@@ -150,10 +207,12 @@ if(myUrl === url + url_starships ||myUrl === url + url_starships + page + curren
     
         }
 
+        load()
 
 }
 
 async function buttonCard(url,type) {
+
     // isVisiblePagination()
     document.querySelector('.main__content').innerHTML = ''
 
@@ -162,7 +221,6 @@ async function buttonCard(url,type) {
             const data = await response.json()
             
     if(type === 'vehicles'){
-        document.querySelector('.main__content').innerHTML = ''
         const card = document.createElement('div')
         card.className = 'main__item'
         card.innerHTML = `
@@ -183,7 +241,6 @@ async function buttonCard(url,type) {
       }
 
       if(type === 'films'){
-        document.querySelector('.main__content').innerHTML = ''
         const card = document.createElement('div')
         card.className = 'main__item'
         card.innerHTML = `
@@ -199,7 +256,6 @@ async function buttonCard(url,type) {
 
 
       if(type === 'starships'){
-        document.querySelector('.main__content').innerHTML = ''
         const card = document.createElement('div')
         card.className = 'main__item'
         card.innerHTML = `
@@ -313,7 +369,7 @@ function activeLink(event) {
     event.target.classList.add("active")
     currentValue = parseInt(event.target.getAttribute('data-value'), 10)
 
-    fetchPage(url + url_people + page + currentValue)
+    fetchPage(paginatorLink + page + currentValue)
 
 }
 
@@ -333,7 +389,7 @@ function backBtn() {
     //     l.classList.remove("active")
     // })
     // links[currentValue - 1].classList.add("active")
-    fetchPage(url + url_people + page + currentValue)
+    fetchPage(paginatorLink + page + currentValue)
 
 
 }
@@ -353,7 +409,7 @@ function nextBtn() {
     //     l.classList.remove("active")
     // })
     // links[currentValue - 1].classList.add("active")
-    fetchPage(url + url_people + page + currentValue)
+    fetchPage(paginatorLink + page + currentValue)
 }
 
 
@@ -367,7 +423,7 @@ console.log(myUrl)
     })
     .then((data) => {
         document.querySelector('.main__content').innerHTML = ''
-        data.results.forEach(card => addCard(card, myUrl,))
+        data.results.forEach(card => addCard(card, myUrl))
         btnExit.classList.remove('exit-off')
     })
     .catch(error => {
@@ -378,5 +434,5 @@ console.log(myUrl)
 
 function isVisiblePagination (){
     // if()
-    pagination.style.display = 'none'
+    pagination.style.display = pagination.style.display === 'none' ? 'block' : 'none'
 }

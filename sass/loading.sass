@@ -1,15 +1,19 @@
 .preloader
-    position: fixed
+    position: absolute
     left: 0
     top: 0
     width: 100%
     height: 100%
     background: -webkit-linear-gradient(90deg, #0f0055,#4b3cff,#b4c3ff)
     background: linear-gradient(90deg, #0f0055,#4b3cff,#b4c3ff)
-    z-index: 2
+    // z-index: 2
     opacity: 1
+    display: flex
     transition: 1s all
     visibility: visible
+    justify-content: center
+    align-items: center
+    overflow: hidden
     .loader 
        width: 75px
        height: 75px
@@ -20,7 +24,7 @@
        top: 50%
        left: 50%
        transform: translate(-50%,-50%)
-       animation: 1s spin infinite linear 
+       animation: 3s spin infinite linear 
     &.done
         opacity: 0
         visibility: hidden
@@ -28,5 +32,6 @@
 @keyframes spin
     0%
         transform: translate(-50%,-50%)rotate(0deg)
+
     100%
          transform: translate(-50%,-50%)rotate(360deg)

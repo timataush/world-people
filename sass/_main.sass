@@ -1,11 +1,15 @@
 .main
    display: grid
+   height: 100vh
    &__content
       display: grid
       grid-template-columns: 2fr 2fr 2fr 2fr 2fr
       gap: 13px
       height: 100%
       margin-left: 200px
+      position: relative
+      // background: red
+      // position: fixed
    &__item
       width: 205px
       height: 320px
@@ -89,7 +93,12 @@
         bottom: .15em
         transition: all 1s
         border-radius: 20px
-
+   &__pagination
+      // margin-top: auto
+      //  bottom: auto
+      margin-top: auto
+      display: flex
+      justify-content: center
    &__badge:hover:after 
       width: 0%
       border-bottom-width: 1px
