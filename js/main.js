@@ -51,8 +51,6 @@ function init(){
     load()
     fetchData(url + url_people)
     paginatorLink = url + url_people
-    // updatePagination(totalPages)
-    // countFetch(myUrl)
 
 }
 
@@ -68,7 +66,13 @@ load()
         document.querySelector('.main__content').innerHTML = ''
         data.results.forEach(card => addCard(card,myUrl))
         btnExit.classList.remove('exit-off')
-
+        
+        
+        const itemsPerPage = 10
+        quantityPage = Math.ceil(data.count / itemsPerPage)
+        updatePagination(quantityPage)
+       
+        
       })
     
       .catch(error => {
@@ -78,45 +82,35 @@ load()
     }
 
     async function countFetch(myUrl) {
-            const response = await fetch(myUrl)
-            const data = await response.json()
-            const itemsPerPage = 10
-            quantityPage = Math.ceil(data.count / itemsPerPage)
-            updatePagination(quantityPage)
-       
+        const response = await fetch(myUrl)
+        const data = await response.json()
+
+            
+        
     }
     
 
     function updatePagination(totalPages) {
         const ul = document.querySelector('.main__ul')
         ul.innerHTML = ''
+            
+           
         for (let i = 1; i <= totalPages; i++) {
             const pageLink = document.createElement('li')
             pageLink.className = 'main__items'
             pageLink.setAttribute('data-value', i)
             pageLink.textContent = i
+            
             if (i === 1) {
                 pageLink.classList.add("active")
+                
             }
             pageLink.addEventListener('click', activeLink)
-            
             ul.append(pageLink)
         }
     
-        // links = document.querySelectorAll('.main__items')
     }
     
-
-
-
-
-
-
-
-
-
-
-
 
     async function addCard(data,myUrl){
 
@@ -212,9 +206,8 @@ if(myUrl === url + url_starships ||myUrl === url + url_starships + page + curren
 }
 
 async function buttonCard(url,type) {
-
-    // isVisiblePagination()
     document.querySelector('.main__content').innerHTML = ''
+    btnExit.classList.remove('exit-off')
 
   await url.forEach(async (link) => {
             const response = await fetch(link)
@@ -277,28 +270,30 @@ async function buttonCard(url,type) {
         document.querySelector('.main__content').append(card)
       }
 
-     if(data.length === 0){
-        document.querySelector('.main__content').innerHTML = ''
-        const card = document.createElement('div')
-        card.className = 'main__warning'
-        card.innerHTML = `<div> Ничего не найдено</div>`
-        document.querySelector('.main__content').append(card)
+    //  if(data.length === 0){
+    //     console.log('DDDDDD')
+    //     document.querySelector('.main__content').innerHTML = ''
+    //     const card = document.createElement('div')
+    //     card.className = 'main__warning'
+    //     card.innerHTML = `<div> Ничего не найдено</div>`
+    //     document.querySelector('.main__content').append(card)
 
-     }
-    })
-}
-
-
-
-
-
-
-
-
-
+    //  }
+     if (data.vehicles && data.vehicles.length === ' ') {
+        console.log('DDDDDD')
+    }
+    
+    if (data.films && data.films.length === 0) {
+        console.log('DDDDDD')
+    }
+    
+    if (data.starships && data.starships.length === 0) {
+        console.log('DDDDDD')
+    }
     
 
-
+    })
+}
 
 
 async function fetchPlanet(data) {
@@ -363,25 +358,26 @@ links.forEach(link => {
 })
 
 function activeLink(event) {
-    links.forEach(l => {
+    // event.preventDefault()
+
+    const currentLinks = document.querySelectorAll('.main__items')
+    currentLinks.forEach(l => {
         l.classList.remove("active")
     })
     event.target.classList.add("active")
     currentValue = parseInt(event.target.getAttribute('data-value'), 10)
-
+    // Загружаем данные для выбранной страницы
     fetchPage(paginatorLink + page + currentValue)
-
 }
 
 
 function backBtn() {
-    if (currentValue > 1) {
-        links.forEach(l => {
-            l.classList.remove("active")
-        })
-        currentValue--
-        links[currentValue - 1].classList.add("active")
-    }
+    // if (currentValue > 1) {
+    //     links.forEach(l => {
+    //         l.classList.remove("active")
+    //     })
+        // links[currentValue - 1].classList.add("active")
+    // }
     // if(currentValue === 0){
     //     currentValue = 9
     // }
@@ -389,32 +385,41 @@ function backBtn() {
     //     l.classList.remove("active")
     // })
     // links[currentValue - 1].classList.add("active")
-    fetchPage(paginatorLink + page + currentValue)
+    if (currentValue > 1) {
+    console.log(currentValue)
+        currentValue--
+        updateActivePage()
+        fetchPage(paginatorLink + page + currentValue)
 
+    }
+}
 
+function updateActivePage(){
+    load()
+    const currentLinks = document.querySelectorAll('.main__items')
+        currentLinks.forEach(l => l.classList.remove('active'))
+        // links.forEach(l => l.classList.remove('active'))
+
+        const newActive = document.querySelector(`.main__items[data-value="${currentValue}"]`)
+        if (newActive) newActive.classList.add('active')
 }
 
 function nextBtn() {
-    if (currentValue < links.length) {
-        links.forEach(l => {
-            l.classList.remove("active")
-        })
+    // if (currentValue < links.length) {
+    //     links.forEach(l => {
+    //         l.classList.remove("active")
+    //     })
+        // currentValue++
+        // links[currentValue - 1].classList.add("active")
+      if(quantityPage > currentValue){
         currentValue++
-        links[currentValue - 1].classList.add("active")
-    }
-    // if(currentValue === 9){
-    //     currentValue = 1
-    // }
-    // links.forEach(l => {
-    //     l.classList.remove("active")
-    // })
-    // links[currentValue - 1].classList.add("active")
-    fetchPage(paginatorLink + page + currentValue)
+        updateActivePage()
+        fetchPage(paginatorLink + page + currentValue)
+      }
 }
 
 
 async function fetchPage(myUrl) {
-console.log(myUrl)
     load()
 
     await fetch(myUrl)
@@ -427,12 +432,13 @@ console.log(myUrl)
         btnExit.classList.remove('exit-off')
     })
     .catch(error => {
+
         console.error('Ошибка:', error)
     })
     load()
 }
 
 function isVisiblePagination (){
-    // if()
     pagination.style.display = pagination.style.display === 'none' ? 'block' : 'none'
 }
+
