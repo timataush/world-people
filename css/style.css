@@ -23,6 +23,9 @@
 .aside__people {
   margin-bottom: 50px;
 }
+.aside__people.active {
+  color: yellow;
+}
 .aside__ship {
   margin-bottom: 20px;
 }
@@ -128,6 +131,10 @@
   width: 100%;
 }
 
+.button.active {
+  color: yellow;
+}
+
 .main {
   display: grid;
   height: 100vh;
@@ -208,6 +215,8 @@
   margin-top: 5px;
   border-radius: 15px;
   position: relative;
+  justify-content: center;
+  align-items: center;
 }
 .main__badge {
   position: absolute;

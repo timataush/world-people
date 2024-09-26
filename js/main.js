@@ -9,29 +9,34 @@ const btnPrev = document.querySelector('.btnpg.main__prev')
 const links = document.querySelectorAll('.main__items')
 const pagination = document.querySelector('.main__pagination')
 
+const buttonsAside = document.querySelectorAll('.button')
+
+
 btnNext.addEventListener('click', nextBtn)
 btnPrev.addEventListener('click', backBtn)
-
 
 
 if (btnExit) {btnExit.addEventListener('click', goBack)}
 if(toPlanet){toPlanet.addEventListener('click', planetCardInfo)}
 
 btnPeople.addEventListener('click', ()=>{
-    paginatorLink = url + url_people,
-    fetchData( url + url_people),
-    countFetch(url + url_people)
+    paginatorLink = url + url_people;
+    fetchData( url + url_people);
+    countFetch(url + url_people);
+
  })
 btnShip.addEventListener('click', ()=>{
-    paginatorLink = url + url_starships,
-    fetchData(url + url_starships),
-    countFetch(url + url_starships)
+    paginatorLink = url + url_starships;
+    fetchData(url + url_starships);
+    countFetch(url + url_starships);
+
 
  })
 btnPlanet.addEventListener('click', ()=>{ 
-    paginatorLink = url + url_species,
-    fetchData(url + url_species),
-    countFetch(url + url_species)
+    paginatorLink = url + url_species;
+    fetchData(url + url_species);
+    countFetch(url + url_species);
+
 
  })
 
@@ -51,6 +56,8 @@ function init(){
     load()
     fetchData(url + url_people)
     paginatorLink = url + url_people
+    isVisibleYellowBtn ()
+    btnPeople.classList.add('active')
 
 }
 
@@ -66,9 +73,11 @@ load()
         document.querySelector('.main__content').innerHTML = ''
         data.results.forEach(card => addCard(card,myUrl))
         btnExit.classList.remove('exit-off')
-        
-        
+        // isVisibleYellowBtn ()
+
         const itemsPerPage = 10
+        currentValue = 1
+
         quantityPage = Math.ceil(data.count / itemsPerPage)
         updatePagination(quantityPage)
        
@@ -113,10 +122,9 @@ load()
     
 
     async function addCard(data,myUrl){
+       load()
 
-        load()
-
-    if(myUrl === url + url_people || myUrl === url + url_people + page + currentValue){
+    if(myUrl.includes(url_people)){
 
     const homeworldName = await fetchPlanet(data)
 
@@ -159,7 +167,7 @@ load()
 btnExit.classList.add('exit-off')
 
 }
-if(myUrl === url + url_starships ||myUrl === url + url_starships + page + currentValue){
+if(myUrl.includes(url_starships)){
 
     const card = document.createElement('div')
     card.className = 'main__item'
@@ -182,7 +190,7 @@ if(myUrl === url + url_starships ||myUrl === url + url_starships + page + curren
   document.querySelector('.main__content').append(card)
 
     }
-    if(myUrl === url + url_species || myUrl === url + url_species + page + currentValue){
+    if(myUrl.includes(url_species)){
         const card = document.createElement('div')
         card.className = 'main__item'
         card.innerHTML =`
@@ -208,10 +216,24 @@ if(myUrl === url + url_starships ||myUrl === url + url_starships + page + curren
 async function buttonCard(url,type) {
     document.querySelector('.main__content').innerHTML = ''
     btnExit.classList.remove('exit-off')
+    isVisiblePagination ()
+    if(!url.length){
+            console.log('DDDDDD')
+            document.querySelector('.main__content').innerHTML = ''
+            const card = document.createElement('div')
+            card.className = 'main__warning'
+            card.innerHTML = `<div> Ничего не найдено, братан</div>`
+            document.querySelector('.main__content').append(card)
+            return
+         }
 
-  await url.forEach(async (link) => {
-            const response = await fetch(link)
-            const data = await response.json()
+//   await url.forEach(async (link) => {
+//             const response = await fetch(link)
+//             const data = await response.json()
+        
+        for (const link of url) {
+        const response = await fetch(link)
+        const data = await response.json()
             
     if(type === 'vehicles'){
         const card = document.createElement('div')
@@ -249,6 +271,7 @@ async function buttonCard(url,type) {
 
 
       if(type === 'starships'){
+
         const card = document.createElement('div')
         card.className = 'main__item'
         card.innerHTML = `
@@ -270,29 +293,9 @@ async function buttonCard(url,type) {
         document.querySelector('.main__content').append(card)
       }
 
-    //  if(data.length === 0){
-    //     console.log('DDDDDD')
-    //     document.querySelector('.main__content').innerHTML = ''
-    //     const card = document.createElement('div')
-    //     card.className = 'main__warning'
-    //     card.innerHTML = `<div> Ничего не найдено</div>`
-    //     document.querySelector('.main__content').append(card)
-
-    //  }
-     if (data.vehicles && data.vehicles.length === ' ') {
-        console.log('DDDDDD')
-    }
     
-    if (data.films && data.films.length === 0) {
-        console.log('DDDDDD')
     }
-    
-    if (data.starships && data.starships.length === 0) {
-        console.log('DDDDDD')
-    }
-    
-
-    })
+// )
 }
 
 
@@ -301,6 +304,7 @@ async function fetchPlanet(data) {
         const responsePl = await fetch(data.homeworld)
         const homeworldData = await responsePl.json()
         return homeworldData.name
+
 }
 
 
@@ -308,6 +312,7 @@ async function fetchPlanet(data) {
 async function planetCardInfo(homeworldUrl) {
 
     load()
+    isVisiblePagination ()
     const responsePl = await fetch(homeworldUrl)
     const homeworldData = await responsePl.json()
 
@@ -344,8 +349,15 @@ function load() {
     }
 }
 
+
+
 function goBack() {
     fetchData(url + url_people)
+    isVisiblePagination()
+    isVisibleYellowBtn()
+    
+    buttonsAside.forEach(btn => btn.classList.remove('active'))
+    btnPeople.classList.add('active')
 }
 
 
@@ -358,48 +370,31 @@ links.forEach(link => {
 })
 
 function activeLink(event) {
-    // event.preventDefault()
-
     const currentLinks = document.querySelectorAll('.main__items')
     currentLinks.forEach(l => {
         l.classList.remove("active")
     })
     event.target.classList.add("active")
     currentValue = parseInt(event.target.getAttribute('data-value'), 10)
-    // Загружаем данные для выбранной страницы
     fetchPage(paginatorLink + page + currentValue)
 }
 
 
 function backBtn() {
-    // if (currentValue > 1) {
-    //     links.forEach(l => {
-    //         l.classList.remove("active")
-    //     })
-        // links[currentValue - 1].classList.add("active")
-    // }
-    // if(currentValue === 0){
-    //     currentValue = 9
-    // }
-    // links.forEach(l => {
-    //     l.classList.remove("active")
-    // })
-    // links[currentValue - 1].classList.add("active")
     if (currentValue > 1) {
     console.log(currentValue)
         currentValue--
         updateActivePage()
-        fetchPage(paginatorLink + page + currentValue)
 
+        fetchPage(paginatorLink + page + currentValue)
     }
 }
 
 function updateActivePage(){
+
     load()
     const currentLinks = document.querySelectorAll('.main__items')
         currentLinks.forEach(l => l.classList.remove('active'))
-        // links.forEach(l => l.classList.remove('active'))
-
         const newActive = document.querySelector(`.main__items[data-value="${currentValue}"]`)
         if (newActive) newActive.classList.add('active')
 }
@@ -440,5 +435,14 @@ async function fetchPage(myUrl) {
 
 function isVisiblePagination (){
     pagination.style.display = pagination.style.display === 'none' ? 'block' : 'none'
+}
+function isVisibleYellowBtn (){
+buttonsAside.forEach(button => {
+    button.addEventListener('click', () => {
+      buttonsAside.forEach(btn => btn.classList.remove('active'))
+      button.classList.add('active')
+    })
+
+  })
 }
 
