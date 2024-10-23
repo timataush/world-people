@@ -22,23 +22,31 @@ if(toPlanet){toPlanet.addEventListener('click', planetCardInfo)}
 btnPeople.addEventListener('click', ()=>{
     paginatorLink = url + url_people;
     fetchData( url + url_people);
-    countFetch(url + url_people);
+    test(btnPeople)
+    isVisiblePagination(true)
 
  })
 btnShip.addEventListener('click', ()=>{
     paginatorLink = url + url_starships;
     fetchData(url + url_starships);
-    countFetch(url + url_starships);
+    test(btnShip)
+    isVisiblePagination(true)
 
 
  })
 btnPlanet.addEventListener('click', ()=>{ 
     paginatorLink = url + url_species;
     fetchData(url + url_species);
-    countFetch(url + url_species);
 
-
+    test(btnPlanet)
+    isVisiblePagination(true)
  })
+
+ function test(btnType){
+activeButton.classList.toggle('active')
+btnType.classList.toggle('active')
+activeButton = btnType
+ }
 
 const url = 'https://swapi.dev/api/'
 const url_people = 'people/'
@@ -54,41 +62,48 @@ let quantityPage = ''
 init()
 function init(){
     load()
-    fetchData(url + url_people)
     paginatorLink = url + url_people
+
+    fetchData(paginatorLink)
     isVisibleYellowBtn ()
     btnPeople.classList.add('active')
+    activeButton = url + url_people
 
 }
 
-async function fetchData(myUrl){
-load()
 
+async function fetchData(myUrl) {
+    load();
     await fetch(myUrl)
-    .then((response) => {
-
-        return response.json()
-    })
+    .then((response) => response.json())
     .then((data) => {
         document.querySelector('.main__content').innerHTML = ''
-        data.results.forEach(card => addCard(card,myUrl))
+        data.results.forEach(card => addCard(card, myUrl))
         btnExit.classList.remove('exit-off')
-        // isVisibleYellowBtn ()
 
         const itemsPerPage = 10
         currentValue = 1
 
         quantityPage = Math.ceil(data.count / itemsPerPage)
         updatePagination(quantityPage)
-       
-        
-      })
-    
-      .catch(error => {
-        console.error('Ошибка:', error)
+
+        // Показать пагинатор после загрузки данных
+        isVisiblePagination(quantityPage > 1)
     })
-        load()
-    }
+    .catch(error => console.error('Ошибка:', error))
+    load()
+
+
+    // const data = await fetchData2(myUrl)
+    // document.querySelector('.main__content').innerHTML = ''
+    // data.results.forEach(card => addCard(card, myUrl))
+    // btnExit.classList.remove('exit-off')
+    // updatePagination(quantityPage)
+    // load
+
+}
+
+
 
     async function countFetch(myUrl) {
         const response = await fetch(myUrl)
@@ -98,40 +113,46 @@ load()
         
     }
     
-
     function updatePagination(totalPages) {
+
+        // const itemsPerPage = 10
+        // currentValue = 1
+        // quantityPage = Math.ceil(data.count / itemsPerPage)
+
         const ul = document.querySelector('.main__ul')
         ul.innerHTML = ''
-            
-           
+
         for (let i = 1; i <= totalPages; i++) {
             const pageLink = document.createElement('li')
             pageLink.className = 'main__items'
             pageLink.setAttribute('data-value', i)
             pageLink.textContent = i
-            
+    
             if (i === 1) {
                 pageLink.classList.add("active")
-                
             }
             pageLink.addEventListener('click', activeLink)
             ul.append(pageLink)
         }
-    
     }
     
+
+
+
+
+
 
     async function addCard(data,myUrl){
        load()
 
     if(myUrl.includes(url_people)){
 
-    const homeworldName = await fetchPlanet(data)
+    const response = await fetchData2(data.homeworld)
 
     const card = document.createElement('div')
     card.className = 'main__item'
     card.innerHTML =`
-     <a class="main__badge">${homeworldName}</a>
+     <a class="main__badge">${response.name}</a>
     <div class="main__info">
     <div><strong>name:</strong>${data.name}</div>
     <div><strong>height:</strong>${data.height}</div>
@@ -216,7 +237,7 @@ if(myUrl.includes(url_starships)){
 async function buttonCard(url,type) {
     document.querySelector('.main__content').innerHTML = ''
     btnExit.classList.remove('exit-off')
-    isVisiblePagination ()
+    isVisiblePagination(false)    
     if(!url.length){
             console.log('DDDDDD')
             document.querySelector('.main__content').innerHTML = ''
@@ -232,8 +253,9 @@ async function buttonCard(url,type) {
 //             const data = await response.json()
         
         for (const link of url) {
-        const response = await fetch(link)
-        const data = await response.json()
+        // const response = await fetch(link)
+        // const data = await response.json()
+        const data = await fetchData2(link)
             
     if(type === 'vehicles'){
         const card = document.createElement('div')
@@ -306,15 +328,24 @@ async function fetchPlanet(data) {
         return homeworldData.name
 
 }
+async function fetchData2(link) {
+
+    const response = await fetch(link)
+    return await response.json()
+
+}
 
 
 
 async function planetCardInfo(homeworldUrl) {
 
     load()
-    isVisiblePagination ()
-    const responsePl = await fetch(homeworldUrl)
-    const homeworldData = await responsePl.json()
+    isVisiblePagination()
+
+    const response = await fetchData2(homeworldUrl)
+
+    // const responsePl = await fetch(homeworldUrl)
+    // const homeworldData = await responsePl.json()
 
     document.querySelector('.main__content').innerHTML = ''
 
@@ -322,11 +353,11 @@ async function planetCardInfo(homeworldUrl) {
     card.className = 'main__item-planet'
     card.innerHTML = `
         <div class="main__planet-info">
-        Name:${homeworldData.name}
-        Climate: ${homeworldData.climate}
-        Terrain: ${homeworldData.terrain}
-        Population:${homeworldData.population}
-        Diameter:${homeworldData.diameter}
+        Name:${response.name}
+        Climate: ${response.climate}
+        Terrain: ${response.terrain}
+        Population:${response.population}
+        Diameter:${response.diameter}
         <a href="#" class="bt main__planet-exit">exit</a>
         </div>`
 
@@ -353,7 +384,7 @@ function load() {
 
 function goBack() {
     fetchData(url + url_people)
-    isVisiblePagination()
+    isVisiblePagination(true)
     isVisibleYellowBtn()
     
     buttonsAside.forEach(btn => btn.classList.remove('active'))
@@ -431,11 +462,21 @@ async function fetchPage(myUrl) {
         console.error('Ошибка:', error)
     })
     load()
+
+    // const data = await fetchData2(myUrl)
+    // document.querySelector('.main__content').innerHTML = ''
+    // data.results.forEach(card => addCard(card, myUrl))
+    // btnExit.classList.remove('exit-off')
+    // load()
 }
 
-function isVisiblePagination (){
-    pagination.style.display = pagination.style.display === 'none' ? 'block' : 'none'
+
+
+function isVisiblePagination(visible) {
+    pagination.style.display = visible ? 'block' : 'none'
 }
+
+  
 function isVisibleYellowBtn (){
 buttonsAside.forEach(button => {
     button.addEventListener('click', () => {
@@ -445,4 +486,18 @@ buttonsAside.forEach(button => {
 
   })
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -240,6 +240,7 @@
   border-radius: 20px;
 }
 .main__pagination {
+  margin: 0 auto;
   margin-top: auto;
   display: flex;
   justify-content: center;
